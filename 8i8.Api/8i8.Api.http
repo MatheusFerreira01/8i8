@@ -1,0 +1,6 @@
+@_8i8.Api_HostAddress = http://localhost:5262
+
+GET {{_8i8.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

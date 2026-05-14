@@ -1,0 +1,56 @@
+services:
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: evolution-postgres-prod
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - internal-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: evolution-redis-prod
+    restart: always
+    networks:
+      - internal-network
+
+  evolution-api:
+    image: evoapicloud/evolution-api:v2.3.0
+    container_name: evolution-api-prod
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "${SERVER_PORT}:8080"
+    env_file:
+      - .env
+    environment:
+      AUTHENTICATION_API_KEY: ${AUTHENTICATION_API_KEY}
+      DATABASE_ENABLED: "true"
+      DATABASE_PROVIDER: postgresql
+      DATABASE_CONNECTION_URI: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
+      CACHE_REDIS_ENABLED: "true"
+      CACHE_REDIS_URI: ${REDIS_URI}
+    volumes:
+      - evolution_instances_prod:/evolution/instances
+    restart: always
+    networks:
+      - internal-network
+      - public-network
+
+volumes:
+  postgres_data_prod:
+  evolution_instances_prod:
+
+networks:
+  internal-network:
+    driver: bridge
+    internal: true
+  public-network:
+    driver: bridge
