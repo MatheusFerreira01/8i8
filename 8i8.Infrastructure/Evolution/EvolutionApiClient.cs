@@ -76,7 +76,6 @@ public class EvolutionApiClient : IEvolutionApiClient
             return null;
 
         var raw = await response.Content.ReadAsStringAsync(ct);
-        Console.WriteLine($"[DBG] {raw}");
         var result = System.Text.Json.JsonSerializer.Deserialize<EvolutionQrCodeResponse>(raw);
         return result?.PairingCode ?? result?.Code;
     }

@@ -106,6 +106,5 @@ volumes:
 networks:
   internal-network:
     driver: bridge
-    internal: true
   public-network:
     driver: bridge
