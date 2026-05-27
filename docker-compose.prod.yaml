@@ -76,6 +76,9 @@ services:
   evolution-api:
     image: evoapicloud/evolution-api:v2.3.0
     container_name: 8i8-evolution-prod
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     depends_on:
       - postgres
       - redis
