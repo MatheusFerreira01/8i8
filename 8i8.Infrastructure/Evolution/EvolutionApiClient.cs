@@ -34,6 +34,10 @@ public class EvolutionApiClient : IEvolutionApiClient
     {
         var body = new { instanceName, qrcode = false, integration = "WHATSAPP-BAILEYS" };
         var response = await SendAsync(HttpMethod.Post, "/instance/create", body, ct);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            return new EvolutionCreateInstanceResponse { Instance = new EvolutionInstanceInfo { InstanceName = instanceName } };
+
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<EvolutionCreateInstanceResponse>(cancellationToken: ct)
@@ -66,13 +70,14 @@ public class EvolutionApiClient : IEvolutionApiClient
 
     public async Task<string?> GetPairingCodeAsync(string instanceName, string phoneNumber, CancellationToken ct = default)
     {
-        var response = await SendAsync(HttpMethod.Get, $"/instance/connect/{instanceName}?number={phoneNumber}", body: null, ct);
+        var body = new { phoneNumber };
+        var response = await SendAsync(HttpMethod.Post, $"/instance/pairingCode/{instanceName}", body, ct);
 
         if (!response.IsSuccessStatusCode)
             return null;
 
         var result = await response.Content.ReadFromJsonAsync<EvolutionQrCodeResponse>(cancellationToken: ct);
-        return result?.PairingCode;
+        return result?.PairingCode ?? result?.Code;
     }
 
     public async Task SetWebhookAsync(string instanceName, CancellationToken ct = default)
