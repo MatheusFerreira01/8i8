@@ -62,14 +62,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+var version = typeof(Program).Assembly.GetName().Version?.ToString(3) ?? "unknown";
+
 app.MapGet("/", () => Results.Ok(new
 {
     Application = "8i8 API",
+    Version = version,
     Environment = app.Environment.EnvironmentName,
     Status = "Running"
 }));
 
 app.MapInstanceEndpoints();
 app.MapWebhookEndpoints();
+app.MapBotControlEndpoints();
 
 app.Run();
