@@ -24,16 +24,21 @@ public class EvolutionMessageData
     [JsonPropertyName("messageType")]
     public string MessageType { get; set; } = default!;
 
+    [JsonPropertyName("sender")]
+    public string? Sender { get; set; }
+
     [JsonPropertyName("state")]
     public string? State { get; set; }
 }
 
 public class EvolutionKey
 {
-    [JsonPropertyName("remoteJid")]    
+    [JsonPropertyName("remoteJid")]
     public string RemoteJid { get; set; } = default!;
     [JsonPropertyName("fromMe")]
     public bool FromMe { get; set; }
+    [JsonPropertyName("senderPn")]
+    public string? SenderPn { get; set; }
 }
 
 public class EvolutionMessage
