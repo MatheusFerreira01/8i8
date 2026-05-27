@@ -19,7 +19,8 @@ public static class WebhookEndpoints
             IServiceScopeFactory scopeFactory,
             IEvolutionApiClient evolution,
             IMemoryCache cache,
-            ILoggerFactory loggerFactory) =>
+            ILoggerFactory loggerFactory,
+            IConfiguration configuration) =>
         {
             var payload =
                 await JsonSerializer.DeserializeAsync<EvolutionWebhookRequest>(
@@ -40,7 +41,7 @@ public static class WebhookEndpoints
             if (payload.Event != "messages.upsert")
                 return Results.Ok();
 
-            if (!payload.Data.Key.FromMe)
+            if (payload.Data.Key.FromMe)
                 return Results.Ok();
 
             var isTextMessage = payload.Data.MessageType is "conversation" or "extendedTextMessage";
@@ -68,6 +69,14 @@ public static class WebhookEndpoints
             var number =
                 payload.Data.Key.RemoteJid
                     .Replace("@s.whatsapp.net", "");
+
+            var botEnabled = configuration.GetValue<bool>("ChatBot:Enabled", true);
+            if (!botEnabled)
+                return Results.Ok();
+
+            var allowedNumbers = configuration.GetSection("ChatBot:AllowedNumbers").Get<List<string>>();
+            if (allowedNumbers is { Count: > 0 } && !allowedNumbers.Contains(number))
+                return Results.Ok();
 
             var instance = payload.Instance;
             var logger = loggerFactory.CreateLogger("Webhook");

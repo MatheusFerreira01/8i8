@@ -1,0 +1,70 @@
+
+  {
+    "info": {
+      "name": "8i8 API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+      {
+        "key": "base_url",
+        "value": "https://8i8.dgtss.com.br"
+      }
+    ],
+    "item": [
+      {
+        "name": "Health Check",
+        "request": {
+          "method": "GET",
+          "url": "{{base_url}}/",
+          "description": "Verifica se a API está no ar"
+        }
+      },
+      {
+        "name": "Instâncias",
+        "item": [
+          {
+            "name": "Criar instância (QR Code)",
+            "request": {
+              "method": "POST",
+              "url": "{{base_url}}/instances",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"name\": \"cliente-nome\"\n}"
+              },
+              "description": "Cria instância e retorna QR Code base64 para escanear"
+            }
+          },
+          {
+            "name": "Criar instância (Código de Pareamento)",
+            "request": {
+              "method": "POST",
+              "url": "{{base_url}}/instances/connect-phone",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"name\": \"cliente-nome\",\n  \"phoneNumber\": \"5511999999999\"\n}"
+              },
+              "description": "Cria instância e retorna código de pareamento. Número no formato DDI+DDD+número (sem +)"
+            }
+          },
+          {
+            "name": "Status da instância",
+            "request": {
+              "method": "GET",
+              "url": "{{base_url}}/instances/cliente-nome/status",
+              "description": "Retorna estado da conexão: open = conectado"
+            }
+          },
+          {
+            "name": "QR Code da instância",
+            "request": {
+              "method": "GET",
+              "url": "{{base_url}}/instances/cliente-nome/qrcode",
+              "description": "Retorna QR Code atualizado se ainda não conectado"
+            }
+          }
+        ]
+      }
+    ]
+  }
