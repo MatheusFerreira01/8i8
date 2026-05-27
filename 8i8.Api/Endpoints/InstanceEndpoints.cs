@@ -15,9 +15,12 @@ public static class InstanceEndpoints
 
             await evolution.SetWebhookAsync(instanceName, ct);
 
-            var qrCode = result.Qrcode?.Base64 is not null
-                ? result.Qrcode
-                : await evolution.GetQrCodeAsync(instanceName, ct);
+            EvolutionQrCodeResponse? qrCode = result.Qrcode?.Base64 is not null ? result.Qrcode : null;
+            for (int i = 0; i < 5 && qrCode?.Base64 is null; i++)
+            {
+                await Task.Delay(2000, ct);
+                qrCode = await evolution.GetQrCodeAsync(instanceName, ct);
+            }
 
             if (qrCode?.Base64 is null)
             {
@@ -47,7 +50,12 @@ public static class InstanceEndpoints
 
             await evolution.SetWebhookAsync(instanceName, ct);
 
-            var pairingCode = await evolution.GetPairingCodeAsync(instanceName, body.PhoneNumber, ct);
+            string? pairingCode = null;
+            for (int i = 0; i < 5 && pairingCode is null; i++)
+            {
+                await Task.Delay(2000, ct);
+                pairingCode = await evolution.GetPairingCodeAsync(instanceName, body.PhoneNumber, ct);
+            }
 
             if (pairingCode is null)
                 return Results.BadRequest(new { error = "Não foi possível gerar o código de pareamento. Verifique o número informado." });
