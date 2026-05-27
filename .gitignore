@@ -46,6 +46,10 @@ appsettings.Staging.json
 pgdata/
 redisdata/
 
+# Documentos locais
+DEPLOY.md
+ROADMAP.md
+
 # OS
 .DS_Store
 Thumbs.db

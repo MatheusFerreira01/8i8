@@ -46,6 +46,9 @@ public static class WebhookEndpoints
             if (payload.Event != "messages.upsert")
                 return Results.Ok();
 
+            if (payload.Data.Key.FromMe)
+                return Results.Ok();
+
             var isTextMessage = payload.Data.MessageType is "conversation" or "extendedTextMessage";
             if (!isTextMessage)
                 return Results.Ok();
