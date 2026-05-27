@@ -70,8 +70,7 @@ public class EvolutionApiClient : IEvolutionApiClient
 
     public async Task<string?> GetPairingCodeAsync(string instanceName, string phoneNumber, CancellationToken ct = default)
     {
-        var body = new { phoneNumber };
-        var response = await SendAsync(HttpMethod.Post, $"/instance/pairingCode/{instanceName}", body, ct);
+        var response = await SendAsync(HttpMethod.Get, $"/instance/connect/{instanceName}?number={phoneNumber}", body: null, ct);
 
         if (!response.IsSuccessStatusCode)
             return null;
