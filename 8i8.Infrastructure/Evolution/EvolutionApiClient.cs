@@ -75,7 +75,10 @@ public class EvolutionApiClient : IEvolutionApiClient
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<EvolutionQrCodeResponse>(cancellationToken: ct);
+        var raw = await response.Content.ReadAsStringAsync(ct);
+        Console.WriteLine($"[DEBUG-PAIRING] status={response.StatusCode} body={raw}");
+
+        var result = System.Text.Json.JsonSerializer.Deserialize<EvolutionQrCodeResponse>(raw);
         return result?.PairingCode ?? result?.Code;
     }
 
