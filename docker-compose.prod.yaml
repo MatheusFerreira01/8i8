@@ -86,6 +86,7 @@ services:
       - .env
     environment:
       AUTHENTICATION_API_KEY: ${AUTHENTICATION_API_KEY}
+      SERVER_URL: "https://evo.8i8.dgtss.com.br"
       DATABASE_ENABLED: "true"
       DATABASE_PROVIDER: postgresql
       DATABASE_CONNECTION_URI: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/evolution_db_prod"
@@ -96,6 +97,7 @@ services:
     restart: always
     networks:
       - internal-network
+      - public-network
 
 volumes:
   postgres_data_prod:
